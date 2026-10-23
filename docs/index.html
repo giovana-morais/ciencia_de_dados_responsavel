@@ -1,12 +1,45 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="pt-BR">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>ciência de dados responsável</title>
         <link href="css/style.css" rel="stylesheet">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css" />
     </head>
     <body>
-        olá mundo!
+
+        <!-- Master Outer Frame -->
+        <div class="outer-frame">
+
+            <!-- Left Column: Navigation / Sidebar -->
+            <aside class="sidebar">
+            <h1 class="course-title">Ciência de Dados<br>Responsável</h1>
+
+            <nav class="nav-group">
+                <button class="nav-item" data-id="sobre">Sobre o curso</button>
+
+                <h2 class="nav-heading">Encontros</h2>
+                <ul class="nav-list">
+                <li><button class="nav-item" data-id="encontro-1">Encontro 1</button></li>
+                <li><button class="nav-item" data-id="encontro-2">Encontro 2</button></li>
+                <li><button class="nav-item" data-id="encontro-3">Encontro 3</button></li>
+                <li><button class="nav-item" data-id="encontro-4">Encontro 4</button></li>
+                </ul>
+            </nav>
+            </aside>
+
+            <!-- Right Column: Content Display -->
+            <main class="content-panel" id="content-panel">
+            <!-- Injected dynamically by script.js -->
+            </main>
+
+        </div>
+
+        <script src="script.js"></script>
     </body>
 </html>

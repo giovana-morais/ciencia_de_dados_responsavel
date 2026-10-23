@@ -1,0 +1,193 @@
+/* --- Global Resets & Font Setup --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #a3a7aa;
+  color: #3c3f4a;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* --- Layout Structure --- */
+
+/* 1. Contêiner externo (fundo #8c8f91, sem bordas) */
+.outer-frame {
+  width: 100%;
+  height: calc(100vh - 48px);
+  border: none;
+  border-radius: 36px;
+  padding: 24px;
+  display: flex;
+  gap: 24px;
+  background-color: #a3a7aa;
+}
+
+/* 2. Coluna esquerda (Menu Lateral / Painel interno) */
+.sidebar {
+  flex: 0 0 320px;
+  border: none;
+  border-radius: 24px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #e3e6ea;
+  box-shadow: 0 4px 12px rgba(60, 63, 74, 0.08);
+  overflow: hidden; /* Mantém os cantos superiores do título alinhados ao container */
+}
+
+/* 3. Coluna direita (Painel principal de conteúdo) */
+.content-panel {
+  flex: 1;
+  border: none;
+  border-radius: 24px;
+  padding: 36px 40px;
+  overflow-y: auto;
+  background-color: #e3e6ea;
+  box-shadow: 0 4px 12px rgba(60, 63, 74, 0.08);
+}
+
+/* --- Typography & Elements --- */
+
+/* Bloco do título: mais longo verticalmente, Poppins Extra Bold e base reta */
+.course-title {
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700; 
+  line-height: 1.5;
+  background-color: #3c3f4a;
+  color: #e3e6ea;
+  padding: 44px 20px; /* Mais longo no sentido vertical */
+  margin: 0 0 24px 0;
+  border-radius: 0;   /* Base totalmente reta */
+  text-align: center;
+}
+
+.nav-group {
+  width: 100%;
+}
+
+.nav-heading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #3c3f4a;
+  margin: 20px 0 10px 0;
+  padding-left: 20px;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+/* Botões de navegação: sem bordas arredondadas */
+.nav-item {
+  width: 100%;
+  display: block;
+  background: none;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #3c3f4a;
+  cursor: pointer;
+  text-align: left;
+  padding: 10px 20px;
+  border-radius: 0; /* Reto, sem cantos arredondados */
+  transition: all 0.2s ease;
+}
+
+/* Itens da lista de encontros: recuo extra para efeito aninhado */
+.nav-list .nav-item {
+  padding-left: 36px;
+}
+
+/* Destaque ao passar o mouse ou se estiver selecionado */
+.nav-item:hover,
+.nav-item.active {
+  background-color: #b19cb9;
+  color: #e3e6ea;
+}
+
+.nav-item.active {
+  font-weight: 600;
+}
+
+/* --- Content Area Specific Styles --- */
+.content-panel h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #3c3f4a;
+  margin-bottom: 24px;
+}
+
+.content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Lista com bolinhas para slides e notebook */
+.topics-list {
+  list-style-type: disc; /* Bolinha padrão preenchida */
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.content-link {
+  font-size: 1.1rem;
+  color: #3c3f4a;
+  text-decoration: none;
+  display: inline-block;
+  transition: color 0.2s ease;
+}
+
+.content-link:hover {
+  text-decoration: underline;
+}
+
+.content-block h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #3c3f4a;
+  margin-bottom: 6px;
+}
+
+.content-block ul {
+  list-style-type: "- ";
+  padding-left: 20px;
+}
+
+.content-block li {
+  font-size: 1rem;
+  color: #3c3f4a;
+  margin-bottom: 4px;
+}
+
+/* --- Responsive Breakpoint --- */
+@media (max-width: 768px) {
+  .outer-frame {
+    flex-direction: column;
+    height: auto;
+    min-height: auto;
+    padding: 12px;
+  }
+
+  .sidebar {
+    flex: none;
+    width: 100%;
+  }
+}
