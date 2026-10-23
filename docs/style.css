@@ -18,7 +18,7 @@ body {
 
 /* --- Layout Structure --- */
 
-/* 1. Contêiner externo (fundo #8c8f91, sem bordas) */
+/* 1. Contêiner externo */
 .outer-frame {
   width: 100%;
   height: calc(100vh - 48px);
@@ -40,7 +40,7 @@ body {
   flex-direction: column;
   background-color: #e3e6ea;
   box-shadow: 0 4px 12px rgba(60, 63, 74, 0.08);
-  overflow: hidden; /* Mantém os cantos superiores do título alinhados ao container */
+  overflow: hidden; 
 }
 
 /* 3. Coluna direita (Painel principal de conteúdo) */
@@ -56,7 +56,7 @@ body {
 
 /* --- Typography & Elements --- */
 
-/* Bloco do título: mais longo verticalmente, Poppins Extra Bold e base reta */
+/* Bloco do título */
 .course-title {
   width: 100%;
   font-family: 'Poppins', sans-serif;
@@ -65,9 +65,9 @@ body {
   line-height: 1.5;
   background-color: #3c3f4a;
   color: #e3e6ea;
-  padding: 44px 20px; /* Mais longo no sentido vertical */
+  padding: 44px 20px; 
   margin: 0 0 24px 0;
-  border-radius: 0;   /* Base totalmente reta */
+  border-radius: 0;  
   text-align: center;
 }
 
@@ -91,7 +91,7 @@ body {
   width: 100%;
 }
 
-/* Botões de navegação: sem bordas arredondadas */
+/* Botões de navegação */
 .nav-item {
   width: 100%;
   display: block;
@@ -104,11 +104,11 @@ body {
   cursor: pointer;
   text-align: left;
   padding: 10px 20px;
-  border-radius: 0; /* Reto, sem cantos arredondados */
+  border-radius: 0; 
   transition: all 0.2s ease;
 }
 
-/* Itens da lista de encontros: recuo extra para efeito aninhado */
+/* Itens da lista de encontros */
 .nav-list .nav-item {
   padding-left: 36px;
 }
@@ -140,7 +140,7 @@ body {
 
 /* Lista com bolinhas para slides e notebook */
 .topics-list {
-  list-style-type: disc; /* Bolinha padrão preenchida */
+  list-style-type: disc; 
   padding-left: 22px;
   display: flex;
   flex-direction: column;
