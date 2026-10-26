@@ -91,7 +91,7 @@ body {
   width: 100%;
 }
 
-/* Botões de navegação */
+/* Links de navegação */
 .nav-item {
   width: 100%;
   display: block;
@@ -103,6 +103,7 @@ body {
   color: #3c3f4a;
   cursor: pointer;
   text-align: left;
+  text-decoration: none;
   padding: 10px 20px;
   border-radius: 0; 
   transition: all 0.2s ease;
