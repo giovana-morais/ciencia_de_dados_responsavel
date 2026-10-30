@@ -5,31 +5,14 @@
   box-sizing: border-box;
 }
 
-/*  Fundo quadriculado
 
 body {
   font-family: 'JetBrains Mono', monospace;
   background-color: #E5E5F7;
+  /* fundo quadriculado  */
   background-image:  repeating-linear-gradient(0deg, transparent, transparent 19px, #bbbbff 19px, #bbbbff 20px, transparent 20px, transparent 39px, #bbbbff 39px, #bbbbff 40px), repeating-linear-gradient(90deg, transparent, transparent 19px, #bbbbff 19px, #bbbbff 20px, transparent 20px, transparent 39px, #bbbbff 39px, #bbbbff 40px), radial-gradient(circle at 20px 20px, #bbbbff 1.6px, transparent 2.1px), radial-gradient(circle at 0px 0px, #bbbbff 1.2px, transparent 1.7px), radial-gradient(circle at 40px 0px, #bbbbff 1.2px, transparent 1.7px), radial-gradient(circle at 0px 40px, #bbbbff 1.2px, transparent 1.7px), radial-gradient(circle at 40px 40px, #bbbbff 1.2px, transparent 1.7px);
   background-size: 40px 40px;
   background-attachment: fixed;
-  color: #3c3f4a;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-*/
-
-
-/* Fundo gradiente*/
-body {
-  font-family: 'JetBrains Mono', monospace;
-  
-  background: #190933;
-  background: radial-gradient(circle, #190933 30%, #bbbbff 86%, #b19cb9 96%);
-  background-attachment: fixed; 
   color: #3c3f4a;
   min-height: 100vh;
   display: flex;
