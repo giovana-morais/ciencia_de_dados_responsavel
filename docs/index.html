@@ -4,42 +4,59 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>ciência de dados responsável</title>
-        <link href="css/style.css" rel="stylesheet">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="style.css" />
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
-
-        <!-- Master Outer Frame -->
         <div class="outer-frame">
-
-            <!-- Left Column: Navigation / Sidebar -->
             <aside class="sidebar">
-            <h1 class="course-title">Ciência de Dados<br>Responsável</h1>
+                <h1 class="course-title">Ciência de Dados<br>Responsável</h1>
 
-            <nav class="nav-group">
-                <button class="nav-item" data-id="sobre">Sobre o curso</button>
+                <nav class="nav-group">
+                    <a class="nav-item active" href="index.html">Sobre o curso</a>
 
-                <h2 class="nav-heading">Encontros</h2>
-                <ul class="nav-list">
-                <li><button class="nav-item" data-id="encontro-1">Encontro 1</button></li>
-                <li><button class="nav-item" data-id="encontro-2">Encontro 2</button></li>
-                <li><button class="nav-item" data-id="encontro-3">Encontro 3</button></li>
-                <li><button class="nav-item" data-id="encontro-4">Encontro 4</button></li>
-                </ul>
-            </nav>
+                    <h2 class="nav-heading">Encontros</h2>
+                    <ul class="nav-list">
+                        <li><a class="nav-item" href="encontro_1.html">Encontro 1</a></li>
+                        <li><a class="nav-item" href="encontro_2.html">Encontro 2</a></li>
+                        <li><a class="nav-item" href="encontro_3.html">Encontro 3</a></li>
+                        <li><a class="nav-item" href="encontro_4.html">Encontro 4</a></li>
+                    </ul>
+                </nav>
             </aside>
 
-            <!-- Right Column: Content Display -->
-            <main class="content-panel" id="content-panel">
-            <!-- Injected dynamically by script.js -->
+            <main class="content-panel">
+                <h2>Sobre o curso</h2>
+                <div class="content-section">
+                    <p>Esse curso discute os impactos da ciência de dados a partir de uma premissa:
+                    não existe algoritmo neutro e os dados não falam por si só. Partindo da crítica
+                    à suposta neutralidade dos dados e dos modelos, discutiremos ferramentas
+                    teóricas, como conceitos éticos de justiça e igualdade a partir de diferentes
+                    correntes filosóficas, e ferramentas práticas, como métricas estatísticas de
+                    equidade e técnicas de explicabilidade, para que vieses sejam identificados e,
+                    quando possível, mitigados. Durante quatro encontros, examinaremos onde o viés
+                    aparece no ciclo de vida dos dados, como auditar modelos opacos e quais os
+                    avanços recentes no debate sobre governança de dados e regulação no Brasil e no
+                    mundo. Ao longo dessas aulas, vamos tentar abordar de maneiras diferentes uma
+                    pergunta importante e pouco explorada no desenvolvimento de modelos de
+                    aprendizado de máquina e aprendizado profundo: quem são as pessoas interessadas
+                    nesses sistemas e quem são as pessoas afetadas por eles.</p>
+                </div>
+
+                <br>
+                <h2>Disclaimer</h2>
+                <div>
+                    Os materiais apresentados aqui usam como base os materiais
+                    disponibilizados pela Prof. Julia Stoyanich, em seu curso
+                    <a href="https://dataresponsibly.github.io/rds24/">Responsible
+                    Data Science</a>, ministrado na New York University.
+                Adaptei para um mini-curso e trouxe mais referências
+                brasileiras para o material.
+                </div>
             </main>
-
         </div>
-
-        <script src="script.js"></script>
     </body>
 </html>
