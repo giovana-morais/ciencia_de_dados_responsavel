@@ -1,4 +1,11 @@
+# meus slides e arquivos temporários
 *.odp
 **/*.odp
+**/.~lock.*.odp#
 
+# checkpoints dos notebooks
 **/.ipynb_checkpoints/
+
+# dados encontro1
+encontro_1/microdados_enem_2023/
+
