@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+        <style>
+            .heading-anchor { opacity: 0.25; text-decoration: none; font-weight: 400; }
+            h1:hover .heading-anchor, h2:hover .heading-anchor, h3:hover .heading-anchor,
+            h4:hover .heading-anchor, .heading-anchor:focus { opacity: 1; }
+            h1[id], h2[id], h3[id], h4[id] { scroll-margin-top: 1rem; }
+        </style>
+        <title>Equidade em Aprendizado de Máquina - Fairlearn (tradução)</title>
+    </head>
+    <body>
+
+        <!-- Tradução de: https://fairlearn.org/main/user_guide/fairness_in_machine_learning.html
+            Fonte: docs/user_guide/fairness_in_machine_learning.rst (branch main do repositório fairlearn/fairlearn), 16/11/2026. -->
+
+            <main class="content-panel">
+                <p>[essa é uma tradução livre, feita com o auxílio de IA
+                (Claude Opus 5.5). revisei tudo manualmente e
+                adicionei/removi/adaptei conteúdo onde achei que fazia sentido.
+                comentários adicionais estão entre colchetes ([]). boa
+                leitura!</p><br> 
+
+                <h1 id="fairness-in-machine-learning">Equidade em Aprendizado de Máquina <a class="heading-anchor" href="#fairness-in-machine-learning" aria-label="Link para esta seção">#</a></h1><br>
+
+                <h2 id="fairness-of-ai-systems">Equidade de sistemas de IA <a class="heading-anchor" href="#fairness-of-ai-systems" aria-label="Link para esta seção">#</a></h2><br>
+
+                <p>Sistemas de IA podem se comportar de forma injusta por diversos
+                motivos. Às vezes, isso se deve a vieses sociais refletidos nos dados
+                de treinamento e nas decisões tomadas durante o desenvolvimento e 
+                implantação desses sistemas. Em outros casos, os sistemas de IA se
+                comportam de forma injusta por causa dos dados (por
+                exemplo, poucos pontos de dados sobre algum grupo de pessoas) ou de
+                características dos próprios sistemas. Pode ser difícil distinguir
+                entre esses motivos, sobretudo porque eles não são mutuamente
+                exclusivos e muitas vezes exarcebam um ao outro. Por isso, definimos se
+                um sistema de IA está se comportando de forma injusta em termos de seu
+                impacto sobre as pessoas — isto é, em termos de danos — e não em termos
+                de causas específicas, como vieses sociais, ou em termos de intenção,
+                como preconceito.</p>
+
+                <br><p><strong>Uso da palavra viés.</strong> Como definimos equidade em
+                termos de danos, e não de causas específicas (como vieses sociais),
+                evitamos usar as palavras <em>viés</em> (<em>bias</em>) ou <em>remoção
+                    de viés</em> (<em>debiasing</em>) ao descrever as funcionalidades do
+                Fairlearn.</p><br>
+
+                <br><h2 id="types-of-harms">Tipos de danos <a class="heading-anchor" href="#types-of-harms" aria-label="Link para esta seção">#</a></h2><br>
+
+                <p>Existem muitos tipos de danos<sup><a href="#ref-1">[1]</a></sup>. Alguns deles são:</p><br>
+
+                <ul>
+                    <li><p><em>Danos de alocação</em> podem ocorrer quando sistemas de
+                        IA concedem ou negam oportunidades, recursos ou informações.
+                        Algumas das principais aplicações estão em contratação, admissão
+                        escolar e concessão de crédito.</p></li>
+                    <li><p><em>Danos de qualidade de serviço</em> podem ocorrer quando
+                        um sistema não funciona tão bem para uma pessoa quanto funciona
+                        para outra, mesmo que nenhuma oportunidade, recurso ou
+                        informação seja concedida ou negada. Exemplos incluem a acurácia
+                        variável em reconhecimento facial, busca de documentos ou
+                        recomendação de produtos.</p></li>
+                    <li><p><em>Danos de estereotipagem</em> podem ocorrer quando um
+                        sistema perpetua estereótipos. Esses danos 
+                        costumam ser vistos quando mecanismos de busca propõem
+                        complementos para consultas digitadas parcialmente [ou quando
+                        uma IA generativa reproduz esteriótipos em suas imagens]. Veja
+                        Umoja
+                        Noble<sup><a href="#ref-2">[2]</a></sup> para uma análise aprofundada dessa
+                        questão. Observe que mesmo estereótipos "positivos" também
+                        são problemáticos, já que ainda criam expectativas com base em
+                        características externas, em vez de tratar as pessoas como
+                        indivíduos.</p></li>
+
+                    <li><p><em>Danos de apagamento</em> podem ocorrer quando um sistema
+                        se comporta como se grupos (ou suas obras) não existissem. Por
+                        exemplo, um gerador de texto solicitado sobre "Mulheres
+                        cientistas do século XIX" pode não produzir nenhum resultado.
+                        Quando questionado sobre locais históricos perto de St. Louis, no
+                        Missouri, um mecanismo de busca pode deixar de mencionar 
+                        <a href="https://en.wikipedia.org/wiki/Cahokia">Cahokia</a>. Uma
+                        consulta semelhante sobre a África Austral pode ignorar o 
+                        <a href="https://en.wikipedia.org/wiki/Great_Zimbabwe">Grande Zimbábue</a>, 
+                        concentrando-se em locais da era colonial. De forma
+                        mais sutil, uma breve biografia de Alan Turing pode não mencionar sua
+                        sexualidade. [talvez ainda mais relevante quando há empresas da tecnologia e IA 
+                        <a href="https://www.gazetadopovo.com.br/ideias/por-que-uma-empresa-de-ia-esta-destruindo-livros-raros-literalmente/">literalmente</a>
+                        <a href="https://forbes.com.br/forbes-tech/2026/08/entenda-por-que-empresas-de-ia-estao-comprando-e-destruindo-livros-raros-e-antigos/">destruindo</a> <a href="https://www.theguardian.com/commentisfree/2026/aug/05/anthropic-ai-destroying-books">livros</a> raros pra consumir seu material 
+                        para treino de modelos. essas empresas também poderiam só... não usar esses livros.]</p></li>
+                </ul><br>
+
+                <p>Esta lista não é exaustiva, e é importante lembrar que os danos não
+                são mutuamente excludentes. Um sistema pode prejudicar vários grupos de
+                pessoas de maneiras diferentes e também infligir múltiplos danos a um
+                único grupo de pessoas. O pacote Fairlearn é mais aplicável a danos de
+                alocação e de qualidade de serviço, pois estes são os mais fáceis de
+                medir.</p><br>
+
+                <h2 id="concept-glossary">Glossário de conceitos <a class="heading-anchor" href="#concept-glossary" aria-label="Link para esta seção">#</a></h2><br>
+
+                <p>Os conceitos apresentados neste glossário são relevantes para contextos sociotécnicos.</p><br>
+
+                <h3 id="construct-validity">Validade de construção <a class="heading-anchor" href="#construct-validity" aria-label="Link para esta seção">#</a></h3><br>
+                <p>Em muitos casos, os danos relacionados à equidade podem ser
+                atribuídos à forma como um problema do mundo real é traduzido em uma
+                tarefa de aprendizado de máquina. Qual variável-alvo pretendemos
+                prever? Quais atributos serão incluídos? Quais restrições (de equidade)
+                consideramos? Muitas dessas decisões se resumem ao que cientistas
+                sociais chamam de mensuração: a forma como medimos fenômenos
+                (abstratos).</p><br>
+
+                <p>Os conceitos apresentados neste glossário oferecem uma introdução à
+                linguagem da modelagem de mensuração, conforme descrita por Jacobs e
+                Wallach<sup><a href="#ref-3">[3]</a></sup>. Esse arcabouço pode ser uma
+                ferramenta útil para testar a validade de pressupostos (implícitos) na
+                formulação de um problema. Dessa forma, ele pode ajudar a mitigar danos
+                relacionados à equidade que podem surgir de descompassos entre a
+                formulação e o contexto real de uma aplicação.</p><br>
+
+                <h4 id="key-terms">Termos-chave <a class="heading-anchor" href="#key-terms" aria-label="Link para esta seção">#</a></h4><br>
+
+                <ul>
+                    <li><p><strong>Contexto sociotécnico</strong> – O contexto em torno
+                        de um sistema técnico, incluindo tanto aspectos sociais (por
+                        exemplo, pessoas, instituições, comunidades) quanto aspectos
+                        técnicos (por exemplo, algoritmos, processos técnicos). O contexto
+                        sociotécnico de um sistema determina quem pode se beneficiar ou ser
+                        prejudicado por sistemas de IA.</p></li>
+
+                    <li><p><strong>Construção teórica não-observável</strong> – Uma ideia ou
+                        conceito que não é observável e não pode ser medido diretamente, mas
+                        que precisa ser inferido por meio de medições observáveis definidas em
+                        um modelo de mensuração.</p></li>
+
+                    <li><p><strong>Modelo de mensuração</strong> – O método e a abordagem usados
+                        para medir a construção teórica não-observável.</p></li>
+
+                    <li><p><strong>Confiabilidade de construção</strong> – Pode ser
+                        entendida como o grau em que as medições de uma construção
+                        teórico não-observável permanecem as mesmas quando medidas em
+                        diferentes momentos. A falta de confiabilidade de construção pode
+                        decorrer de um desalinhamento entre o entendimento da construção
+                        teórico e os métodos usados para medi-la, ou de mudanças
+                        na própria construção. Validade de construção e confiabilidade de
+                        construção são complementares.</p></li>
+
+                    <li><p><strong>Validade de construção</strong> – Pode ser entendida
+                        como o grau em que o modelo de mensuração mede a construção
+                        pretendido de uma forma significativa e útil.</p></li>
+                </ul><br>
+
+                <h4 id="key-term-examples-unobservable-theoretical-constructs-and-measurement-models">Exemplos de termos-chave – construções teóricas não-observáveis e modelos de mensuração <a class="heading-anchor" href="#key-term-examples-unobservable-theoretical-constructs-and-measurement-models" aria-label="Link para esta seção">#</a></h4><br>
+
+                <ul>
+                    <li><p><strong>Equidade</strong> é um exemplo de construção teórica
+                        não observável. Existem vários modelos de mensuração para medir
+                        a equidade, incluindo a paridade demográfica. Essas medições
+                        podem se combinar para formar um modelo de mensuração, no qual
+                        várias medições são combinadas para, em última instância, medir a
+                        equidade. Veja <code>fairlearn.metrics</code> para mais exemplos de
+                        modelos de mensuração para medir a equidade.</p></li>
+
+                    <li><p><strong>Eficácia docente</strong> é um exemplo de
+                        construção teórico não observável. Modelos de
+                        mensuração comuns incluem notas dos estudantes
+                        em provas e o feedback qualitativo dos
+                    estudantes.</p></li>
+
+                    <li><p><strong>Status socioeconômico</strong> é um exemplo
+                        de construção teórico não observável. Um modelo de
+                        mensuração comum inclui a renda familiar anual.</p></li>
+
+                    <li><p><strong>Benefício ao paciente</strong> é um exemplo
+                        de construção teórico não observável. Um modelo de
+                        mensuração comum envolve os custos com o cuidado do
+                        paciente. Veja<sup><a href="#ref-4">[4]</a></sup> para um
+                        exemplo relacionado.</p></li>
+                </ul><br>
+
+                <p><strong>Observação:</strong> Citamos vários exemplos de
+                construçãos teóricos não observáveis e de modelos de mensuração
+                com o objetivo de explicar os termos-chave apresentados acima.
+                Consulte Jacobs e Wallach<sup><a href="#ref-3">[3]</a></sup>
+                para exemplos mais detalhados.</p><br>
+
+                <h4 id="what-is-construct-validity">O que é validade de construção? <a class="heading-anchor" href="#what-is-construct-validity" aria-label="Link para esta seção">#</a></h4><br>
+
+                <p>Embora Jacobs e Wallach<sup><a href="#ref-3">[3]</a></sup>
+                explorem tanto a confiabilidade quanto a validade de
+                construção, concentramos nossa exploração abaixo na validade de
+                construção. Observamos que ambas desempenham um papel
+                importante na compreensão da equidade em contextos
+                sociotécnicos. Dito isso, Jacobs e Wallach<sup><a
+                href="#ref-3">[3]</a></sup> oferecem uma conceituação de
+                validade de construção orientada à equidade, que é útil para pensar
+                sobre equidade em contextos sociotécnicos. Resumimos a ideia em sete
+                partes principais que, combinadas, podem servir como um arcabouço para
+                analisar uma tarefa de IA e tentar estabelecer a validade de
+                construção:</p>
+
+                <ol>
+                    <li><p><strong>Validade de face</strong> – À primeira
+                        vista, quão plausíveis parecem as medições produzidas
+                        pelo modelo de mensuração?</p></li>
+
+                    <li><p><strong>Validade de conteúdo</strong> – Possui três subcomponentes:</p>
+                        <ol type="a">
+                            <li><strong>Contestabilidade</strong> – Existe um
+                                entendimento único do construção teórico não
+                                observável? Ou esse entendimento é contestado
+                            (e, portanto, dependente do contexto)?</li>
+                            <li><strong>Validade substantiva</strong> –
+                                Conseguimos demonstrar que o modelo de
+                                mensuração contém as propriedades observáveis e
+                            outros construçãos teóricos não observáveis
+                            relacionados ao construção de interesse (e somente
+                        eles)?</li>
+                            <li><strong>Validade estrutural</strong> – O modelo
+                                de mensuração captura adequadamente as relações
+                                entre o construção de interesse e as
+                            propriedades observáveis medidas e outros
+                            construçãos teóricos não observáveis?</li>
+                        </ol>
+                    </li>
+
+                    <li><p><strong>Validade convergente</strong> – As medições
+                        obtidas se correlacionam com outras medições
+                        (existentes) provenientes de modelos de mensuração cuja
+                    validade de construção já foi estabelecida?</p></li>
+
+                    <li><p><strong>Validade discriminante</strong> – As
+                        medições obtidas para o construção de interesse se
+                        correlacionam com construçãos relacionados da forma
+                    apropriada?</p></li>
+
+                    <li><p><strong>Validade preditiva</strong> – As medições
+                        obtidas a partir do modelo de mensuração são preditivas
+                        de medições de quaisquer propriedades observáveis
+                    relevantes ou de outros construçãos teóricos não
+                    observáveis?</p></li>
+
+                    <li><p><strong>Validade de hipótese</strong> – Descreve a
+                        natureza das hipóteses que poderiam emergir das
+                        medições produzidas pelo modelo de mensuração e se elas
+                    são "substantivamente interessantes".</p></li>
+
+                    <li><p><strong>Validade consequencial</strong> –
+                        Identificar e avaliar as consequências e os impactos
+                        sociais do uso das medições obtidas para o modelo de
+                    mensuração. Em forma de perguntas: como o mundo é moldado
+                    pelo uso dessas medições, e em que mundo desejamos
+                viver?</p></li>
+                </ol><br>
+
+                <p><strong>Observação:</strong> A ordem em que as partes acima
+                são exploradas e a forma como são usadas podem variar conforme
+                o contexto sociotécnico específico. Isto tem apenas o objetivo
+                de explicar os conceitos-chave que poderiam ser usados em um
+                arcabouço para analisar uma tarefa.</p><br>
+
+                <h2 id="fairness-assessment-and-unfairness-mitigation">Avaliação de equidade e mitigação de iniquidade <a class="heading-anchor" href="#fairness-assessment-and-unfairness-mitigation" aria-label="Link para esta seção">#</a></h2><br>
+
+                <p>No Fairlearn, oferecemos ferramentas para avaliar a equidade
+                de preditores para classificação e regressão. Também oferecemos
+                ferramentas que mitigam a iniquidade em classificação e
+                regressão. Tanto nos cenários de avaliação quanto nos de
+                mitigação, a equidade é quantificada por meio de métricas de
+                disparidade, como descrevemos abaixo.</p><br>
+
+                <h3 id="group-fairness-sensitive-features">Equidade de grupo, atributos sensíveis <a class="heading-anchor" href="#group-fairness-sensitive-features" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>Há muitas abordagens para conceituar a equidade. No
+                Fairlearn, seguimos a abordagem conhecida como equidade de
+                grupo (<em>group fairness</em>), que pergunta: <em>Quais grupos
+                de indivíduos correm risco de sofrer danos?</em></p><br>
+
+            <p>Os grupos relevantes (também chamados de subpopulações) são
+            definidos por meio de <strong>atributos sensíveis</strong>
+            (<em>sensitive features</em> ou <em>sensitive attributes</em>), que
+            são passados a um estimador do Fairlearn como um vetor ou uma
+            matriz chamado <code>sensitive_features</code> (mesmo que se trate
+            de apenas um atributo). O termo sugere que quem projeta o sistema
+            deve estar atento (ser sensível) a esses atributos ao avaliar a
+            equidade de grupo. Embora esses atributos possam, às vezes, ter
+            implicações de privacidade (por exemplo, gênero ou idade), em
+            outros casos podem não ter (por exemplo, se alguém é ou não falante
+            nativo de determinado idioma). Além disso, a palavra sensível não
+            implica que esses atributos não devam ser usados para fazer
+            previsões – na verdade, em alguns casos pode ser melhor
+            incluí-los.</p><br>
+
+            <p>A literatura sobre equidade também usa o termo <em>atributo
+                protegido</em> (<em>protected attribute</em>) em sentido
+            semelhante ao de atributo sensível. O termo se baseia em leis
+            antidiscriminação que definem <em>classes protegidas</em>
+            específicas. Como buscamos aplicar a equidade de grupo em uma gama
+            mais ampla de cenários, evitamos esse termo.</p><br>
+
+                <h3 id="parity-constraints">Restrições de paridade <a
+                        class="heading-anchor" href="#parity-constraints"
+                        aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>A equidade de grupo costuma ser formalizada por um conjunto
+                de restrições sobre o comportamento do preditor, chamadas
+                <strong>restrições de paridade</strong> (também chamadas de
+                critérios). Restrições de paridade exigem que algum aspecto (ou
+                aspectos) do comportamento do preditor seja comparável entre os
+                grupos definidos pelos atributos sensíveis.</p><br>
+
+                <p>Seja <var>X</var> um vetor de atributos usado para as previsões, <var>A</var> um único atributo sensível (como idade ou raça) e <var>Y</var> o rótulo verdadeiro. Restrições de paridade são formuladas em termos de esperanças em relação à distribuição sobre (<var>X</var>, <var>A</var>, <var>Y</var>). Por exemplo, no Fairlearn, consideramos os seguintes tipos de restrições de paridade.</p><br>
+
+                <p><em>Classificação binária</em>:</p><br>
+
+                <ul>
+                    <li><p><em>Paridade demográfica</em> (<em>demographic parity</em>, também conhecida como <em>paridade estatística</em>): Um classificador <var>h</var> satisfaz a paridade demográfica sob uma distribuição sobre (<var>X</var>, <var>A</var>, <var>Y</var>) se sua previsão <var>h</var>(<var>X</var>) for estatisticamente independente do atributo sensível <var>A</var>. Isso equivale a 𝔼[<var>h</var>(<var>X</var>) | <var>A</var>=<var>a</var>] = 𝔼[<var>h</var>(<var>X</var>)] &nbsp; ∀<var>a</var>.<sup><a href="#ref-5">[5]</a></sup></p></li>
+
+                    <li><p><em>Chances equalizadas</em> (<em>equalized odds</em>): Um classificador <var>h</var> satisfaz chances equalizadas sob uma distribuição sobre (<var>X</var>, <var>A</var>, <var>Y</var>) se sua previsão <var>h</var>(<var>X</var>) for condicionalmente independente do atributo sensível <var>A</var> dado o rótulo <var>Y</var>. Isso equivale a 𝔼[<var>h</var>(<var>X</var>) | <var>A</var>=<var>a</var>, <var>Y</var>=<var>y</var>] = 𝔼[<var>h</var>(<var>X</var>) | <var>Y</var>=<var>y</var>] &nbsp; ∀<var>a</var>, <var>y</var>.<sup><a href="#ref-5">[5]</a></sup></p></li>
+
+                    <li><p><em>Igualdade de oportunidade</em> (<em>equal opportunity</em>): uma versão relaxada das chances equalizadas que considera apenas as esperanças condicionais em relação aos rótulos positivos, isto é, <var>Y</var>=1.<sup><a href="#ref-6">[6]</a></sup></p></li>
+                </ul><br>
+
+                <p><em>Regressão</em>:</p><br>
+
+                <ul>
+                    <li><p><em>Paridade demográfica</em>: Um preditor <var>f</var> satisfaz a paridade demográfica sob uma distribuição sobre (<var>X</var>, <var>A</var>, <var>Y</var>) se <var>f</var>(<var>X</var>) for independente do atributo sensível <var>A</var>. Isso equivale a ℙ[<var>f</var>(<var>X</var>) ≥ <var>z</var> | <var>A</var>=<var>a</var>] = ℙ[<var>f</var>(<var>X</var>) ≥ <var>z</var>] &nbsp; ∀<var>a</var>, <var>z</var>.<sup><a href="#ref-7">[7]</a></sup></p></li>
+
+                    <li><p><em>Perda de grupo limitada</em> (<em>bounded group loss</em>): Um preditor <var>f</var> satisfaz a perda de grupo limitada no nível ζ sob uma distribuição sobre (<var>X</var>, <var>A</var>, <var>Y</var>) se 𝔼[<var>loss</var>(<var>Y</var>, <var>f</var>(<var>X</var>)) | <var>A</var>=<var>a</var>] ≤ ζ &nbsp; ∀<var>a</var>.<sup><a href="#ref-7">[7]</a></sup></p></li>
+                </ul><br>
+
+                <p>Acima, a paridade demográfica busca mitigar danos de alocação, enquanto a perda de grupo limitada busca principalmente mitigar danos de qualidade de serviço. Chances equalizadas e igualdade de oportunidade podem ser usadas como diagnóstico tanto para danos de alocação quanto para danos de qualidade de serviço.</p><br>
+
+                <h3 id="disparity-metrics-group-metrics">Métricas de disparidade, métricas de grupo <a class="heading-anchor" href="#disparity-metrics-group-metrics" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>Métricas de disparidade avaliam o quanto um dado preditor se afasta de satisfazer uma restrição de paridade. Elas podem comparar o comportamento entre diferentes grupos em termos de razões ou de diferenças. Por exemplo, para classificação binária:</p><br>
+
+                <ul>
+                    <li><em>Diferença de paridade demográfica</em> (<em>demographic parity difference</em>) é definida como (max<sub><var>a</var></sub> 𝔼[<var>h</var>(<var>X</var>) | <var>A</var>=<var>a</var>]) − (min<sub><var>a</var></sub> 𝔼[<var>h</var>(<var>X</var>) | <var>A</var>=<var>a</var>]).</li>
+                    <li><em>Razão de paridade demográfica</em> (<em>demographic parity ratio</em>) é definida como min<sub><var>a</var></sub> 𝔼[<var>h</var>(<var>X</var>) | <var>A</var>=<var>a</var>] / max<sub><var>a</var></sub> 𝔼[<var>h</var>(<var>X</var>) | <var>A</var>=<var>a</var>].</li>
+                </ul><br>
+
+                <p>O pacote Fairlearn oferece a funcionalidade de converter
+                métricas comuns de acurácia e de erro do
+                <code>scikit-learn</code> em <em>métricas de grupo</em>, isto
+                é, métricas que são avaliadas sobre o conjunto de dados inteiro
+                e também sobre cada grupo individualmente. Além disso, as
+                métricas de grupo informam os valores mínimo e máximo da
+                métrica e em quais grupos esses valores foram observados, bem
+                como a diferença e a razão entre os valores máximo e mínimo.
+                Para mais informações, consulte o subpacote
+                <code>fairlearn.metrics</code>.</p><br>
+
+                <h2 id="what-traps-can-we-fall-into-when-modeling-a-social-problem">Em quais armadilhas podemos cair ao modelar um problema social? <a class="heading-anchor" href="#what-traps-can-we-fall-into-when-modeling-a-social-problem" aria-label="Link para esta seção">#</a></h2><br>
+
+                <p>Sistemas de aprendizado de máquina usados no mundo real são
+                inerentemente sistemas sociotécnicos, que incluem tanto
+                tecnologias quanto atores sociais. Quem projeta sistemas de
+                aprendizado de máquina normalmente traduz um contexto do mundo
+                real em um modelo de aprendizado de máquina por meio de
+                abstração: concentrando-se apenas nos aspectos "relevantes"
+                desse contexto, que costumam ser descritos por entradas, saídas
+                e a relação entre elas. No entanto, ao abstrair o contexto
+                social, corre-se o risco de cair em "armadilhas de abstração":
+                deixar de considerar como o contexto social e a tecnologia
+                estão inter-relacionados.</p><br>
+
+                <p>Nesta seção, explicamos o que são essas armadilhas e damos algumas sugestões de como podemos evitá-las.</p><br>
+
+                <p>Em "Fairness and Abstraction in Sociotechnical Systems"
+                (Equidade e abstração em sistemas sociotécnicos), Selbst <em>et
+                al.</em><sup><a href="#ref-8">[8]</a></sup> identificam modos
+            de falha que podem surgir ao se abstrair o contexto social durante
+            a modelagem. Eles os identificam como:</p><br>
+
+                <ul>
+                    <li><em>A Armadilha do Solucionismo</em></li>
+                    <li><em>A Armadilha do Efeito Cascata</em></li>
+                    <li><em>A Armadilha do Formalismo</em></li>
+                    <li><em>A Armadilha da Portabilidade</em></li>
+                    <li><em>A Armadilha do Enquadramento</em></li>
+                </ul><br>
+
+                <p>Apresentamos algumas definições e exemplos dessas armadilhas para ajudar as pessoas que usam o Fairlearn a refletir sobre como as escolhas que fazem em seu trabalho podem levar a essas armadilhas comuns ou evitá-las.</p><br>
+
+                <h3 id="the-solutionism-trap">A Armadilha do Solucionismo <a class="heading-anchor" href="#the-solutionism-trap" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>Esta armadilha ocorre quando presumimos que a melhor solução
+                para um problema pode envolver tecnologia e deixamos de
+                reconhecer outras soluções possíveis fora desse âmbito.
+                Abordagens solucionistas também podem não ser apropriadas em
+                situações em que as definições de equidade podem mudar ao longo
+                do tempo (veja "A Armadilha do Formalismo" abaixo).</p><br>
+
+                <p>Exemplo: considere o problema da conectividade à internet em
+                comunidades rurais. Um exemplo da armadilha do solucionismo é
+                presumir que usar ciência de dados para medir a velocidade da
+                internet em uma determinada região pode ajudar a melhorar a
+                conectividade. No entanto, se houver desafios socioeconômicos
+                adicionais na comunidade, por exemplo em educação,
+                infraestrutura, tecnologia da informação ou serviços de saúde,
+                uma solução algorítmica focada exclusivamente na velocidade da
+                internet pode não atender de forma significativa às
+                necessidades da comunidade.</p><br>
+
+                <h3 id="the-ripple-effect-trap">A Armadilha do Efeito Cascata <a class="heading-anchor" href="#the-ripple-effect-trap" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>Esta armadilha ocorre quando não consideramos as
+                consequências não intencionais de introduzir uma tecnologia em
+                um sistema social existente. Tais consequências incluem
+                mudanças de comportamentos, de resultados, de experiências
+                individuais, ou mudanças nos valores e incentivos sociais
+                subjacentes de um dado sistema social; por exemplo, ao aumentar
+                o valor percebido de métricas quantificáveis em detrimento das
+                não quantificáveis.</p><br>
+
+                <p>Exemplo: considere o problema de bancos decidindo se um
+                indivíduo deve ter um empréstimo aprovado. Antes de usar
+                algoritmos de aprendizado de máquina para calcular um "score",
+                os bancos podiam contar com agentes de crédito que conversavam
+                com os clientes, recomendavam um plano com base na situação
+                particular de cada um e discutiam com outros membros da equipe
+                para obter feedback. Com a introdução de um algoritmo, é
+                possível que os agentes de crédito limitem suas conversas com
+                os membros da equipe e com os clientes, presumindo que as
+                recomendações do algoritmo são boas o suficiente sem essas
+                fontes adicionais de informação.</p><br>
+
+                <p>Para evitar essa armadilha, devemos estar cientes de que,
+                uma vez que uma tecnologia é incorporada a um contexto social,
+                novos grupos podem reinterpretá-la de maneira diferente.
+                Devemos adotar cenários do tipo "e se" para imaginar como o
+                contexto social pode mudar após a introdução de um modelo,
+                incluindo como ele pode alterar as dinâmicas de poder dos
+                grupos existentes nesse contexto, ou como os atores podem mudar
+                seus comportamentos para burlar o modelo.</p><br>
+
+                <h3 id="the-formalism-trap">A Armadilha do Formalismo <a class="heading-anchor" href="#the-formalism-trap" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>Muitas tarefas de um cientista de dados envolvem alguma
+                forma de formalização: desde medir fenômenos do mundo real como
+                dados até traduzir indicadores-chave de desempenho (KPIs) e
+                restrições de negócio em métricas, funções de perda ou
+                parâmetros. Caímos na armadilha do formalismo quando deixamos
+                de levar em conta o significado completo de conceitos sociais
+                como a equidade.</p><br>
+
+                <p>A equidade é um construção complexa e contestada: pessoas
+                diferentes podem ter ideias diferentes sobre o que é justo em
+                um cenário específico. Embora métricas matemáticas de equidade
+                possam capturar alguns aspectos da equidade, elas não capturam
+                todos os aspectos relevantes. Por exemplo, métricas de equidade
+                de grupo não levam em conta diferenças nas experiências
+                individuais, nem levam em conta a justiça
+                procedimental.</p><br>
+
+                <p>Em alguns cenários, métricas de equidade como paridade
+                demográfica e chances equalizadas não podem ser satisfeitas ao
+                mesmo tempo. À primeira vista, isso pode parecer um problema
+                matemático. No entanto, o conflito está, na verdade,
+                fundamentado em diferentes entendimentos do que é equidade.
+                Consequentemente, não há uma abordagem matemática para resolver
+                o conflito. Em vez disso, precisamos decidir quais métricas
+                podem ser apropriadas para a situação em questão, tendo em
+                mente as limitações de uma formalização matemática. Em alguns
+                casos, pode não haver nenhuma métrica adequada.</p><br>
+
+                <p>Alguns dos motivos pelos quais caímos nessa armadilha são: a
+                equidade depende do contexto, está aberta à contestação por
+                diferentes grupos de pessoas, e há diferenças entre as formas
+                de pensar sobre equidade no mundo jurídico (isto é, equidade
+                como algo procedimental) e na comunidade de fair-ML (isto é,
+                equidade baseada em resultados).</p><br>
+
+                <p>A abstração matemática encontra limitações ao tentar
+                capturar informações relativas à contextualidade (comunidades
+                diferentes podem ter definições diferentes do que constitui um
+                resultado "injusto"; por exemplo, é injusto contratar, para uma
+                função que exige inglês, um candidato cujo idioma principal é o
+                inglês, em vez de um candidato que não fala inglês?); à
+                contestabilidade (as definições de discriminação e de injustiça
+                são politicamente contestadas e mudam ao longo do tempo, o que
+                pode representar desafios fundamentais para representá-las
+                matematicamente); e à procedimentalidade (por exemplo, como
+                juízes e policiais determinam se fiança, aconselhamento,
+                liberdade condicional ou encarceramento é apropriado).</p><br>
+
+                <h3 id="the-portability-trap">A Armadilha da Portabilidade <a class="heading-anchor" href="#the-portability-trap" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>Esta armadilha ocorre quando deixamos de entender que um
+                modelo ou algoritmo projetado para um contexto social
+                específico não necessariamente se aplica a um contexto social
+                diferente. Reutilizar uma solução algorítmica sem levar em
+                conta as diferenças entre os contextos sociais envolvidos pode
+                gerar resultados enganosos e consequências potencialmente
+                danosas.</p><br>
+
+                <p>Por exemplo, reutilizar um algoritmo de aprendizado de
+                máquina usado para triar candidaturas a vagas na área de
+                enfermagem em um sistema usado para triar candidaturas no setor
+                de tecnologia da informação poderia cair na armadilha da
+                portabilidade. Uma diferença importante entre os dois contextos
+                são as habilidades necessárias para ter sucesso em cada setor.
+                Outra diferença fundamental entre esses contextos envolve as
+                diferenças demográficas (em termos de gênero) dos funcionários
+                de cada setor, que podem resultar da redação dos anúncios de
+                vagas, de construções sociais sobre gênero e papéis sociais, e
+                das porcentagens de candidatos aprovados em cada área por grupo
+                (de gênero).</p><br>
+
+                <h3 id="the-framing-trap">A Armadilha do Enquadramento <a class="heading-anchor" href="#the-framing-trap" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>Esta armadilha ocorre quando deixamos de considerar o quadro
+                completo em torno de um contexto social específico ao abstrair
+                um problema social. Os elementos envolvidos incluem, mas não se
+                limitam a: o cenário social em que o fenômeno escolhido existe,
+                características dos indivíduos ou circunstâncias da situação
+                escolhida, terceiros envolvidos e suas circunstâncias, e a
+                tarefa que se pretende abstrair (isto é, calcular um score de
+                risco, escolher entre um grupo de candidatos, selecionar um
+                tratamento apropriado etc.).</p><br>
+
+                <p>Para evitar traçar limites estreitos sobre o que é
+                considerado parte do escopo do problema, podemos considerar o
+                uso de "enquadramentos" mais amplos sobre o que está no escopo
+                do problema, passando de um enquadramento algorítmico para um
+                enquadramento sociotécnico.</p><br>
+
+                <p>Por exemplo, adotar um enquadramento <em>sociotécnico</em>
+                (em vez de um enquadramento centrado nos dados ou algorítmico)
+                nos permite reconhecer que um modelo de aprendizado de máquina
+                faz parte de interações sociais e técnicas entre pessoas e
+                tecnologia e que, portanto, os componentes sociais de um dado
+                contexto social devem ser incluídos como parte da formulação do
+                problema e da abordagem de modelagem (incluindo processos
+                locais de tomada de decisão, estruturas de incentivo, processos
+                institucionais e outros).</p><br>
+
+                <p>Por exemplo, poderíamos cair nessa armadilha ao avaliar o
+                risco de reincidência em comportamento criminoso de um
+                indivíduo acusado de um delito sem considerar fatores como o
+                legado dos vieses raciais nos sistemas de justiça criminal, a
+                relação entre status socioeconômico e saúde mental e a
+                construção social da criminalidade, além dos vieses sociais
+                existentes de juízes, policiais ou outros atores sociais
+                envolvidos no enquadramento sociotécnico mais amplo em torno de
+                um algoritmo de justiça criminal.</p><br>
+
+                <p>Dentro do enquadramento sociotécnico, o modelo incorpora não
+                apenas dados mais detalhados sobre o histórico do caso, mas
+                também o contexto social em que ocorrem o julgamento e a
+                recomendação de um resultado. Esse enquadramento pode
+                incorporar os processos associados ao registro de crimes, o
+                percurso do delito até o julgamento e a consciência de como a
+                relação entre diversos atores sociais e o algoritmo pode afetar
+                os resultados pretendidos de um dado modelo.</p><br>
+
+                <h2 id="stakeholder-identification">Identificação de partes interessadas <a class="heading-anchor" href="#stakeholder-identification" aria-label="Link para esta seção">#</a></h2><br>
+
+                <h3 id="introduction">Introdução <a class="heading-anchor" href="#introduction" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>Agora que vimos como sistemas de IA podem gerar danos, o que
+                mais devemos levar em conta ao projetar um sistema de IA?
+                Sistemas de IA impactam não apenas os usuários finais, mas
+                também organizações dentro de uma empresa, comunidades, a
+                sociedade civil, órgãos governamentais e setores inteiros. Se
+                os profissionais não tiverem um processo para envolver as
+                partes interessadas, podem acabar se apoiando em suas próprias
+                experiências e identidades e deixar passar danos relacionados à
+                equidade<sup><a href="#ref-9">[9]</a></sup>. Por isso, é
+                importante identificar as partes interessadas, os fatores e os
+                grupos relevantes que podem correr maior risco de sofrer danos
+                relacionados à equidade antes de conduzir uma avaliação de
+                equidade.</p><br>
+
+                <h3 id="defining-terms">Definindo termos <a class="heading-anchor" href="#defining-terms" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p><strong>Partes interessadas</strong> (<em>stakeholders</em>)
+                incluem as partes interessadas diretas — pessoas que usam ou
+                operam um sistema de IA — e as indiretas (pessoas que podem ser
+                prejudicadas por um sistema sem necessariamente serem usuárias
+                ou clientes)<sup><a href="#ref-9">[9]</a></sup>. Por exemplo,
+                no caso de um sistema de IA de detecção de fraudes, poderiam
+                ser identificados três tipos de partes interessadas: a) pessoas
+                cujas transações podem ser classificadas erroneamente como
+                fraudulentas, b) empresas que operam plataformas de
+                transferência de dinheiro com o sistema de IA de detecção de
+                fraudes e c) auditores de fraude do governo local que auditam
+                as transações das plataformas de transferência de
+                dinheiro.</p><br>
+
+                <p>Observação: Há quem aponte que o uso do termo
+                <em>stakeholder</em> pode perpetuar danos coloniais em alguns
+                contextos<sup><a href="#ref-10">[10]</a></sup>. É importante
+                prestar atenção ao contexto em que a identificação de partes
+                interessadas ocorre e fazer os ajustes necessários (por
+                exemplo, optar por uma terminologia alternativa para evitar
+                causar danos).</p><br>
+
+                <p><strong>Fatores e grupos</strong> incluem não apenas fatores
+                demográficos (por exemplo, raça, gênero, idade), mas também
+                fatores socioculturais (por exemplo, coberturas de cabeça,
+                pelos faciais, óculos), fatores comportamentais (por exemplo,
+                velocidade de caminhada) e morfológicos (por exemplo, formato
+                do corpo, tom de pele)<sup><a
+                href="#ref-11">[11]</a></sup>.</p><br>
+
+                <h3 id="identifying-stakeholders">Identificando partes interessadas <a class="heading-anchor" href="#identifying-stakeholders" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>Envolva cientistas de dados e engenheiros, pesquisadores de UX,
+                cientistas sociais e especialistas do domínio na identificação das
+                partes interessadas, junto com pessoas que possam ser afetadas pelo
+                sistema de IA. Organizações comunitárias e da sociedade civil podem
+                ajudar a identificar pessoas que a equipe do projeto deixou de
+                considerar. Pergunte aos participantes quais perspectivas estão
+                faltando e como incluí-las. Considere quem pode influenciar as decisões
+                de design: consultar as partes interessadas não lhes dá,
+                necessariamente, poder sobre o resultado<sup><a href="#ref-12">[12]</a></sup>.
+                Por exemplo, o operador de uma plataforma pode ser capaz de alterar um
+                sistema de detecção de fraudes, enquanto uma pessoa cuja transação é
+                bloqueada por ele pode ter poucas oportunidades de contestar essa
+                decisão. Ao planejar a participação, discuta as diferenças de poder e
+                os interesses conflitantes. Deixe claro quais decisões os participantes
+                podem influenciar e quem tomará as decisões finais. Registre as
+                divergências não resolvidas e explique aos participantes como suas
+                contribuições moldaram o resultado, incluindo os motivos para não
+                adotar determinadas sugestões.</p><br>
+
+                <p>Para cada uso pretendido, descreva o propósito e o contexto de
+                implantação do sistema e, em seguida, identifique quem o opera, de quem
+                são os dados ou as decisões que ele envolve e quem pode sofrer seus
+                efeitos sem usá-lo. Registre esses papéis e os possíveis benefícios e
+                danos, usando perguntas orientadoras como as da seção 2.2 do
+                Responsible AI Impact Assessment Guide (Guia de Avaliação de Impacto de
+                IA Responsável)<sup><a href="#ref-13">[13]</a></sup>. No <a
+                                    href="#defining-terms">exemplo de detecção de fraudes</a>, uma equipe
+                                poderia começar perguntando a clientes, operadores da plataforma e
+                                auditores como as transações são revisadas hoje e quem mais é afetado.
+                                Durante o design, clientes e a equipe de atendimento ao cliente poderiam
+                                ajudar a identificar dificuldades para contestar uma transação bloqueada.
+                                Durante a avaliação, eles poderiam ajudar a interpretar os erros e suas
+                                consequências. Após a implantação, revisar as reclamações com essas partes
+                                interessadas poderia revelar outros grupos afetados. Revisite a lista de
+                                partes interessadas ao longo de todo o ciclo de vida do sistema de IA,
+                                inclusive quando seu uso mudar.</p><br>
+
+                <h3 id="identifying-factors-and-groups">Identificando fatores e grupos <a class="heading-anchor" href="#identifying-factors-and-groups" aria-label="Link para esta seção">#</a></h3><br>
+
+                <p>Pessoas que ocupam o mesmo papel de parte interessada podem sofrer
+                danos diferentes. Use os <a href="#defining-terms">fatores descritos
+                    acima</a> para identificar grupos para a avaliação; por exemplo, a
+                proficiência no idioma é um fator, e pessoas aprendendo um segundo idioma
+                podem ser um grupo relevante ao avaliar um sistema de tradução. Pergunte às
+                partes interessadas quais distinções importam para o caso de uso e o
+                contexto de implantação específicos, em vez de depender apenas de
+                categorias demográficas. Os fatores também podem atravessar os papéis: a
+                proficiência no idioma pode ser relevante tanto para clientes quanto para a
+                equipe de atendimento. Considere 
+                <a href="https://fairlearn.org/main/user_guide/assessment/">grupos
+                    interseccionais</a>, porque avaliar os fatores separadamente pode ocultar
+                diferenças nas experiências das pessoas<sup><a href="#ref-11">[11]</a></sup>.</p><br>
+
+                <p>Considere as disparidades históricas e o contexto cultural
+                ao decidir quem envolver e quais grupos avaliar. Pergunte a
+                especialistas do domínio e às comunidades afetadas sobre
+                exclusões passadas no contexto em questão e como elas podem
+                moldar os dados ou as decisões usados pelo sistema. Por
+                exemplo, o caso da área da saúde discutido anteriormente mostra
+                como usar os custos com saúde como proxy para a necessidade
+                pode reproduzir disparidades no acesso ao cuidado<sup><a href="#ref-4">[4]</a></sup>. Diferenças geográficas e culturais também
+                 importam: sistemas de reconhecimento de objetos tiveram desempenho
+                 ruim com itens domésticos de países de renda mais baixa, com
+                 diferenças na aparência dos objetos e em seus arredores
+                 contribuindo para os erros<sup><a href="#ref-14">[14]</a></sup>. Envolver
+                 pessoas dos contextos de implantação pretendidos pode ajudar as
+                 equipes a identificar grupos relevantes e exemplos para a
+                 avaliação.</p><br>
+
+                <p>Verifique a <a href="#what-is-construct-validity">validade de
+                    construção</a> das categorias sociais usadas para definir os grupos.
+                Discuta com as partes interessadas o que uma categoria pretende
+                representar, como ela é registrada e quais experiências ela pode deixar de
+                fora. Por exemplo, a nacionalidade não é necessariamente uma medida válida
+                de proficiência no idioma para um sistema de tradução. As categorias
+                disponíveis em um conjunto de dados podem não capturar as distinções
+                relevantes para uma avaliação de equidade<sup><a href="#ref-11">[11]</a></sup>.
+                Reconsidere as definições de grupo ao passar para um contexto diferente, em
+                vez de presumir que as definições de um projeto anterior ainda se
+                aplicam.</p><br>
+
+                <h2 id="references">Referências <a class="heading-anchor" href="#references" aria-label="Link para esta seção">#</a></h2><br>
+
+                <ol>
+                    <li id="ref-1">Solon Barocas, Kate Crawford, Aaron Shapiro e Hanna Wallach. The problem with bias: Allocative versus representational harms in machine learning. In <em>9th Annual Conference of the Special Interest Group for Computing, Information and Society</em>. 2017.</li>
+                    <li id="ref-2">Safiya Umoja Noble. <em>Algorithms of Oppression</em>. NYU Press, 2018. <a href="http://algorithmsofoppression.com/">http://algorithmsofoppression.com/</a>.</li>
+                    <li id="ref-3">Abigail Z. Jacobs e Hanna Wallach. Measurement and Fairness. In <em>Proceedings of the 2021 ACM Conference on Fairness, Accountability, and Transparency</em>, FAccT '21, 375–385. New York, NY, USA, 2021. Association for Computing Machinery. <a href="https://doi.org/10.1145/3442188.3445901">doi:10.1145/3442188.3445901</a>.</li>
+                    <li id="ref-4">Ziad Obermeyer, Brian Powers, Christine Vogeli e Sendhil Mullainathan. Dissecting racial bias in an algorithm used to manage the health of populations. <em>Science</em>, 366(6464):447–453, 2019. <a href="https://www.science.org/doi/abs/10.1126/science.aax2342">doi:10.1126/science.aax2342</a>.</li>
+                    <li id="ref-5">Alekh Agarwal, Alina Beygelzimer, Miroslav Dudík, John Langford e Hanna M. Wallach. A Reductions Approach to Fair Classification. In <em>ICML</em>, volume 80 de <em>Proceedings of Machine Learning Research</em>, 60–69. PMLR, 2018. <a href="http://proceedings.mlr.press/v80/agarwal18a.html">http://proceedings.mlr.press/v80/agarwal18a.html</a>.</li>
+                    <li id="ref-6">Moritz Hardt, Eric Price e Nati Srebro. Equality of Opportunity in Supervised Learning. In <em>NeurIPS</em>, 3315–3323. 2016. <a href="https://proceedings.neurips.cc/paper/2016/hash/9d2682367c3935defcb1f9e247a97c0d-Abstract.html">Link</a>.</li>
+                    <li id="ref-7">Alekh Agarwal, Miroslav Dudík e Zhiwei Steven Wu. Fair Regression: Quantitative Definitions and Reduction-Based Algorithms. In <em>ICML</em>, volume 97 de <em>Proceedings of Machine Learning Research</em>, 120–129. PMLR, 2019. <a href="http://proceedings.mlr.press/v97/agarwal19d.html">http://proceedings.mlr.press/v97/agarwal19d.html</a>.</li>
+                    <li id="ref-8">Andrew D. Selbst, danah boyd, Sorelle A. Friedler, Suresh Venkatasubramanian e Janet Vertesi. Fairness and Abstraction in Sociotechnical Systems. In <em>Proceedings of the Conference on Fairness, Accountability, and Transparency</em>, FAT* '19, 59–68. New York, NY, USA, 2019. Association for Computing Machinery. <a href="https://dl.acm.org/doi/10.1145/3287560.3287598">doi:10.1145/3287560.3287598</a>.</li>
+                    <li id="ref-9">Michael Madaio, Lisa Egede, Hariharan Subramonyam, Jennifer Wortman Vaughan e Hanna Wallach. Assessing the Fairness of AI Systems: AI Practitioners' Processes, Challenges, and Needs for Support. In <em>Proceedings of the ACM on Human-Computer Interaction</em>, 1–26. 2022. <a href="https://dl.acm.org/doi/10.1145/3512899">doi:10.1145/3512899</a>.</li>
+                    <li id="ref-10">Mark S. Reed, Bethann Garramon Merkle, Elizabeth J. Cook e outros. Reimagining the language of engagement in a post-stakeholder world. <em>Sustainability Science</em>, 19:1481–1490, 2024. <a href="https://link.springer.com/article/10.1007/s11625-024-01496-4">Link</a>.</li>
+                    <li id="ref-11">Solon Barocas, Anhong Guo, Ece Kamar, Jacquelyn Krones, Meredith Ringel Morris, Jennifer Wortman Vaughan, W. Duncan Wadsworth e Hanna Wallach. Designing Disaggregated Evaluations of AI Systems: Choices, Considerations, and Tradeoffs. In <em>Proceedings of the 2021 AAAI/ACM Conference on AI, Ethics, and Society</em>, 368–378. 2021. <a href="https://dl.acm.org/doi/10.1145/3461702.3462610">doi:10.1145/3461702.3462610</a>.</li>
+                    <li id="ref-12">Fernando Delgado, Stephen Yang, Michael Madaio e Qian Yang. The Participatory Turn in AI Design: Theoretical Foundations and the Current State of Practice. In <em>Proceedings of the 3rd ACM Conference on Equity and Access in Algorithms, Mechanisms, and Optimization</em>, 1–23. 2023. <a href="https://arxiv.org/abs/2310.00907">doi:10.1145/3617694.3623261</a>.</li>
+                    <li id="ref-13">Microsoft. Responsible AI Impact Assessment Guide. 2022. <a href="https://blogs.microsoft.com/wp-content/uploads/prod/sites/5/2022/06/Microsoft-RAI-Impact-Assessment-Guide.pdf">Link</a>.</li>
+                    <li id="ref-14">Terrance de Vries, Ishan Misra, Changhan Wang e Laurens van der Maaten. Does Object Recognition Work for Everyone? In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops</em>, 52–59. 2019. <a href="https://openaccess.thecvf.com/content_CVPRW_2019/html/cv4gc/de_Vries_Does_Object_Recognition_Work_for_Everyone_CVPRW_2019_paper.html">Link</a>.</li>
+                </ol>
+            </main>
+    </body>
+</html>
